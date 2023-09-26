@@ -1,7 +1,7 @@
 class Config:
 
     #Mongo db Connection url
-    MONGO_DB_CONNECTION = ''
+    MONGO_DB_CONNECTION = 'mongodb+srv://container:c53HNPJm84XujUjg@cluster0.uc1yi1a.mongodb.net/'
 
     #API Configs
     API_PATH = '/api/'
