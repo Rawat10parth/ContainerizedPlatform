@@ -58,6 +58,48 @@ def add_to_favourite(username,title):
     else:
         abort(401)
 
+#Fetch list of favourite movies based
+@movies_bp.route(Config.FAVOURITE_MOVIES, methods=['GET'])
+@jwt_required
+def favourite_movies(username):
+    if get_jwt_identity() == username:
+        return make_response(jsonify(Movies.objects(is_favourite=True)), 200)
+    else:
+        abort(401)
+        
+#Admin add movies into database
+@movies_bp.route(Config.ADD_MOVIE, methods=['POST'])
+@jwt_required
+def add_movie(username):
+    if username=='admin':
+        if get_jwt_identity() == username:
+            try:
+                movies = Movies(title=request.json['title'],
+                                movie_type=request.json['movie_type'],
+                                ratings=request.json['ratings'],
+                                duration=request.json['duration'],
+                                age_restriction=request.json['age_restriction'],
+                                timestamp=request.json['timestamp'],
+                                thumbnails=request.json['thumbnails'],
+                                media=request.json['media'],
+                                subtitles=request.json['subtitles'],
+                                description=request.json['description'],
+                                cast=request.json['cast'],
+                                genres=request.json['genres'],
+                                category=request.json['category'],
+                                production=request.json['production'],
+                                country=request.json['country'],
+                                is_favourite=request.json['is_favourite'])
+                movies.save()
+            except KeyError:
+                abort(400)
+            
+            return make_response(jsonify({"success":'Movies Addedd Successfully'}), 201)
+        else:
+            abort(401)
+    else:
+        abort(401)
+
 @movies_bp.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error' : 'Sorry movie not found'}), 404)           
